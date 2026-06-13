@@ -8,7 +8,7 @@ from email.mime.multipart import MIMEMultipart
 import datetime
 
 smtp_server = os.getenv("SMTP_SERVER")
-smtp_port = os.getenv("SMTP_PORT")
+smtp_port = int(os.getenv("SMTP_PORT"))
 sender_email = os.getenv("SENDER_EMAIL")
 receiver_email = os.getenv("RECEIVER_EMAIL")
 password = os.getenv("SMTP_PASSWORD")

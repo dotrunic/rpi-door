@@ -8,9 +8,9 @@ import os
 load_dotenv()
 
 IMAP_SERVER = os.getenv("IMAP_SERVER")
-IMAP_PORT = os.getenv("IMAP_PORT")
+IMAP_PORT = int(os.getenv("IMAP_PORT"))
 OWNER_EMAIL = os.getenv("OWNER_EMAIL")
-POLL_INTERVAL = os.getenv("POLL_INTERVAL")
+POLL_INTERVAL = int(os.getenv("POLL_INTERVAL"))
 PASSWORD = os.getenv("IMAP_PASSWORD")
 DRY_RUN = os.getenv("DRY_RUN")
 
