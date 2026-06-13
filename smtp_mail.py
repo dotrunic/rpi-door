@@ -6,7 +6,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import datetime
-from utils import log, stash
+from utils import log
 
 smtp_server = os.getenv("SMTP_SERVER")
 smtp_port = int(os.getenv("SMTP_PORT"))
@@ -15,6 +15,7 @@ receiver_email = os.getenv("RECEIVER_EMAIL")
 password = os.getenv("SMTP_PASSWORD")
 
 def sendMessage(body):
+    server = None
     try:
         subjectTime = datetime.datetime.now()
         subject = '[HOMENET - DOOR] ' + body + ' ' + str(subjectTime)
@@ -33,7 +34,9 @@ def sendMessage(body):
     except Exception as e:
         log(f'Error sending email: {e}')
     finally:
-        server.quit()
+        if server is not None:
+            server.quit()
 
 
-sendMessage('[SERVER]: starting ...')
+if __name__ == "__main__":
+    sendMessage('[SERVER]: starting ...')

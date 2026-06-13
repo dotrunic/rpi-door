@@ -3,7 +3,7 @@ import time
 import datetime
 import smtp_mail
 
-from utils import log, stash
+from utils import log
 from dotenv import load_dotenv
 import os
 load_dotenv()
