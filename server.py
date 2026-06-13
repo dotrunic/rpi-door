@@ -3,7 +3,7 @@ from utils import log, stash
 
 app = Flask(__name__)
 
-log("hello logging from server")
+log("[SERVER]: starting ...")
 
 @app.route("/")
 def home():
