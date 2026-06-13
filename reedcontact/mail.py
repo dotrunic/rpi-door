@@ -6,6 +6,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import datetime
+import logging
 
 smtp_server = os.getenv("SMTP_SERVER")
 smtp_port = int(os.getenv("SMTP_PORT"))
@@ -28,9 +29,9 @@ def sendMessage(body):
         messageBody = body + '\n\n[TIME]: ' + str(currentTime) + '\n\n'
         msg.attach(MIMEText(messageBody, 'plain'))
         server.send_message(msg)
-        # print('EMAIL SUCCESSFULLY SEND TO OWNER!')
+        # log('EMAIL SUCCESSFULLY SEND TO OWNER!')
     except Exception as e:
-        print(f'Error sending email: {e}')
+        log(f'Error sending email: {e}')
     finally:
         server.quit()
 

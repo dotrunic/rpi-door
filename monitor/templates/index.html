@@ -2,12 +2,34 @@
 <html>
 
 <head>
-    <title>My Flask App</title>
+    <title>Pi Monitor</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #111;
+            color: #0f0;
+        }
+
+        #logs {
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Hello from Flask 👋</h1>
-    <p>This HTML file is being served by Flask.</p>
+    <h2>System Logs</h2>
+    <div id="logs"></div>
+
+    <script>
+        async function fetchLogs() {
+            const res = await fetch("/logs");
+            const data = await res.json();
+            document.getElementById("logs").innerText = data.join("\n");
+        }
+
+        setInterval(fetchLogs, 1000);
+        fetchLogs();
+    </script>
 </body>
 
 </html>
