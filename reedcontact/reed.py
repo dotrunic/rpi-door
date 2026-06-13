@@ -3,7 +3,7 @@ import time
 import datetime
 import mail
 
-import logging
+import logger
 from dotenv import load_dotenv
 import os
 load_dotenv()

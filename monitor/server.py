@@ -1,12 +1,11 @@
 from flask import Flask, render_template, jsonify
-from logging import log, stash
+from logger import log, stash
 
 app = Flask(__name__)
 
-@app.route("/")
-
 log("hello logging from server")
 
+@app.route("/")
 def home():
     return render_template("index.html")
 

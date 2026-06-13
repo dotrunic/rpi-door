@@ -6,7 +6,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import datetime
-import logging
+import logger 
 
 smtp_server = os.getenv("SMTP_SERVER")
 smtp_port = int(os.getenv("SMTP_PORT"))
