@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify
-from logger import log, stash
+from utils import log, stash
 
 app = Flask(__name__)
 

@@ -1,9 +1,9 @@
 import RPi.GPIO as GPIO
 import time
 import datetime
-import mail
+import smtp_mail
 
-import logger
+from utils import log, stash
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -23,20 +23,20 @@ try:
 
         if state == GPIO.LOW:
             if door_is_open:
-                mail.sendMessage('[CLOSED]')
+                smtp_mail.sendMessage('[CLOSED]')
                 # log(f"[DEBUG] Door closed: {datetime.datetime.now()}")
             door_is_open = False
             last_sent = 0  # reset open long timer
 
         else:
             if not door_is_open:  # First open detection
-                mail.sendMessage('[OPEN]')
+                smtp_mail.sendMessage('[OPEN]')
                 # log(f"[DEBUG] Door opened: {datetime.datetime.now()}")
                 last_sent = current_time
                 door_is_open = True
             elif current_time - last_sent >= send_interval:
                 # Send OPEN LONG every minute while door stays open
-                mail.sendMessage('[OPEN LONG]')
+                smtp_mail.sendMessage('[OPEN LONG]')
                 # log(f"[DEBUG] Door open (LONG): {datetime.datetime.now()}")
                 last_sent = current_time
 

@@ -3,7 +3,7 @@ import email
 import time
 from email.header import decode_header
 
-import logger
+from utils import log, stash
 from dotenv import load_dotenv
 import os
 load_dotenv()
