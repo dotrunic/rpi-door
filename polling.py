@@ -18,6 +18,7 @@ DRY_RUN = os.getenv("DRY_RUN")
 def connect_imap() -> imaplib.IMAP4_SSL:
     mail = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_PORT)
     mail.login(OWNER_EMAIL, PASSWORD)
+    log("[INFO] Connection from IMAP.")
     return mail
 
 def _parse_email(raw_email: bytes):
@@ -42,7 +43,7 @@ def delete_or_dry_run(mail, uids, action_label="[PAIR]"):
         for uid in uids:
             mail.uid("STORE", uid, "+FLAGS", "\\Deleted")
         mail.expunge()
-        # log(f"[INFO] Deleted {len(uids)} {action_label} emails.")
+        log(f"[INFO] Deleted {len(uids)} {action_label} emails.")
 
 def get_open_closed_pairs(mail, uids):
     """Return a list of tuples (open_uid, closed_uid) representing all complete pairs."""
@@ -70,6 +71,8 @@ def get_open_closed_pairs(mail, uids):
         closed_uid = closed_uids.pop(0)
         pairs.append((open_uid, closed_uid))
 
+    
+    log(f"[INFO] Pairs: {pairs}")
     return pairs
 
 def cleanup_existing_pairs(mail):
@@ -77,6 +80,7 @@ def cleanup_existing_pairs(mail):
     mail.select("inbox")
     status, data = mail.uid("search", None, "ALL")
     if status != "OK":
+        log(f"Status not ok: {status}")
         return
     uids = data[0].split()
     if not uids:
@@ -89,6 +93,7 @@ def cleanup_existing_pairs(mail):
     # Keep the last pair, delete older ones
     to_delete = [uid for pair in pairs[:-1] for uid in pair]
     # log("[INFO] Startup cleanup: Removing old OPEN+CLOSED pairs, keeping the latest pair...")
+    log(f"[INFO] deleting: {to_delete}")
     delete_or_dry_run(mail, to_delete, "[PAIR]")
 
 def poll_inbox():
@@ -102,7 +107,7 @@ def poll_inbox():
         finally:
             try:
                 mail.logout()
-                # log("[INFO] Disconnected from IMAP.")
+                log("[INFO] Disconnected from IMAP.")
             except Exception:
                 pass
         time.sleep(POLL_INTERVAL)

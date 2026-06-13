@@ -24,20 +24,20 @@ try:
         if state == GPIO.LOW:
             if door_is_open:
                 smtp_mail.sendMessage('[CLOSED]')
-                # log(f"[DEBUG] Door closed: {datetime.datetime.now()}")
+                log(f"Door closed: {datetime.datetime.now()}")
             door_is_open = False
             last_sent = 0  # reset open long timer
 
         else:
             if not door_is_open:  # First open detection
                 smtp_mail.sendMessage('[OPEN]')
-                # log(f"[DEBUG] Door opened: {datetime.datetime.now()}")
+                log(f"Door opened: {datetime.datetime.now()}")
                 last_sent = current_time
                 door_is_open = True
             elif current_time - last_sent >= send_interval:
                 # Send OPEN LONG every minute while door stays open
                 smtp_mail.sendMessage('[OPEN LONG]')
-                # log(f"[DEBUG] Door open (LONG): {datetime.datetime.now()}")
+                log(f"Door open (LONG): {datetime.datetime.now()}")
                 last_sent = current_time
 
         time.sleep(0.5)

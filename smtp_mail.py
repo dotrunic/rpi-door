@@ -29,7 +29,7 @@ def sendMessage(body):
         messageBody = body + '\n\n[TIME]: ' + str(currentTime) + '\n\n'
         msg.attach(MIMEText(messageBody, 'plain'))
         server.send_message(msg)
-        # log('EMAIL SUCCESSFULLY SEND TO OWNER!')
+        log(f'Email successfully send: {msg}')
     except Exception as e:
         log(f'Error sending email: {e}')
     finally:
