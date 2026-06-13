@@ -13,7 +13,7 @@ IMAP_PORT = int(os.getenv("IMAP_PORT"))
 OWNER_EMAIL = os.getenv("OWNER_EMAIL")
 POLL_INTERVAL = int(os.getenv("POLL_INTERVAL"))
 PASSWORD = os.getenv("IMAP_PASSWORD")
-DRY_RUN = os.getenv("DRY_RUN")
+DRY_RUN = os.getenv("DRY_RUN", "true").strip().lower() in ("1", "true", "yes", "on")
 
 def connect_imap() -> imaplib.IMAP4_SSL:
     mail = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_PORT)
@@ -113,4 +113,5 @@ def poll_inbox():
         time.sleep(POLL_INTERVAL)
 
 
-poll_inbox()
+if __name__ == "__main__":
+    poll_inbox()
