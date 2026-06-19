@@ -36,7 +36,3 @@ def sendMessage(body):
     finally:
         if server is not None:
             server.quit()
-
-
-if __name__ == "__main__":
-    sendMessage('[SERVER]: starting ...')

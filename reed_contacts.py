@@ -13,8 +13,10 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 send_interval = int(os.getenv("send_interval"))
-last_sent = int(os.getenv("last_sent"))
-door_is_open = os.getenv("door_is_open")
+smtp_mail.sendMessage('[SERVER]: starting ...')
+log(f"[SERVER]: starting ... {datetime.datetime.now()}")
+door_is_open = GPIO.input(PIN) == GPIO.HIGH
+last_sent = time.time()
 
 try:
     while True:
