@@ -14,11 +14,12 @@ sender_email = os.getenv("SENDER_EMAIL")
 receiver_email = os.getenv("RECEIVER_EMAIL")
 password = os.getenv("SMTP_PASSWORD")
 
-def sendMessage(body):
+def sendMessage(body, session_id=None):
     server = None
     try:
         subjectTime = datetime.datetime.now()
-        subject = '[HOMENET - DOOR] ' + body + ' ' + str(subjectTime)
+        tag = f' #{session_id}' if session_id is not None else ''
+        subject = '[HOMENET - DOOR] ' + body + tag + ' ' + str(subjectTime)
         msg = MIMEMultipart()
         msg['From'] = sender_email
         msg['To'] = receiver_email

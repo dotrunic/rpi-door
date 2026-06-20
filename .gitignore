@@ -61,6 +61,11 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
+# rpi-door event store
+events.db
+events.db-wal
+events.db-shm
+
 # Flask stuff:
 instance/
 .webassets-cache

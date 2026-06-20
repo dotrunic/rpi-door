@@ -50,8 +50,8 @@ def mail_fetch(mail):
 def test_dry_run(mail):
     """Read-only: show what polling's cleanup WOULD delete, without deleting.
 
-    Reuses polling.get_open_closed_pairs (the real pairing logic) and applies
-    the same "keep the latest pair, delete the rest" rule as
+    Reuses polling.group_by_session (the real grouping logic) and applies the
+    same "keep the latest session, delete older ones" rule as
     cleanup_existing_pairs, but only prints the result. Never touches the
     mailbox, regardless of the DRY_RUN setting.
     """
@@ -61,18 +61,21 @@ def test_dry_run(mail):
     uids = data[0].split() if status == "OK" else []
     print(f"{len(uids)} message(s) in inbox")
 
-    pairs = polling.get_open_closed_pairs(mail, uids)
-    print(f"Detected {len(pairs)} OPEN+CLOSED pair(s):")
-    for open_uid, closed_uid in pairs:
-        print(f"  OPEN uid={open_uid.decode()}  ->  CLOSED uid={closed_uid.decode()}")
+    sessions = polling.group_by_session(mail, uids)
+    print(f"Detected {len(sessions)} tagged session(s):")
+    for session_id in sorted(sessions):
+        print(f"  session {session_id}: {[uid.decode() for uid in sessions[session_id]]}")
 
-    if len(pairs) <= 1:
-        print("=> Nothing would be deleted (needs >1 pair; the latest is kept).")
+    if len(sessions) <= 1:
+        print("=> Nothing would be deleted (only the latest session is kept).")
         return
 
-    to_delete = [uid for pair in pairs[:-1] for uid in pair]
-    print(f"=> Would delete {len(to_delete)} email(s): "
-          f"{[uid.decode() for uid in to_delete]}  (keeping the latest pair)")
+    latest = max(sessions)
+    older = sorted(sid for sid in sessions if sid < latest)
+    to_remove = [uid for sid in older for uid in sessions[sid]]
+    verb = f"move to '{polling.ARCHIVE_FOLDER}'" if polling.ARCHIVE_FOLDER else "delete"
+    print(f"=> Would {verb} sessions {older} "
+          f"({[uid.decode() for uid in to_remove]}), keeping session {latest}.")
 
 
 if __name__ == "__main__":

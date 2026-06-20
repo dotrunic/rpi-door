@@ -2,11 +2,14 @@ import RPi.GPIO as GPIO
 import time
 import datetime
 import smtp_mail
+import event_store
 
 from utils import log
 from dotenv import load_dotenv
 import os
 load_dotenv()
+
+event_store.init_db()
 
 PIN = 17
 GPIO.setmode(GPIO.BCM)
@@ -25,21 +28,24 @@ try:
 
         if state == GPIO.LOW:
             if door_is_open:
-                smtp_mail.sendMessage('[CLOSED]')
-                log(f"Door closed: {datetime.datetime.now()}")
+                session_id = event_store.record_event('closed')
+                smtp_mail.sendMessage('[CLOSED]', session_id)
+                log(f"Door closed (session {session_id}): {datetime.datetime.now()}")
             door_is_open = False
             last_sent = 0  # reset open long timer
 
         else:
             if not door_is_open:  # First open detection
-                smtp_mail.sendMessage('[OPEN]')
-                log(f"Door opened: {datetime.datetime.now()}")
+                session_id = event_store.record_event('open')
+                smtp_mail.sendMessage('[OPEN]', session_id)
+                log(f"Door opened (session {session_id}): {datetime.datetime.now()}")
                 last_sent = current_time
                 door_is_open = True
             elif current_time - last_sent >= send_interval:
                 # Send OPEN LONG every minute while door stays open
-                smtp_mail.sendMessage('[OPEN LONG]')
-                log(f"Door open (LONG): {datetime.datetime.now()}")
+                session_id = event_store.record_event('open long')
+                smtp_mail.sendMessage('[OPEN LONG]', session_id)
+                log(f"Door open (LONG, session {session_id}): {datetime.datetime.now()}")
                 last_sent = current_time
 
         time.sleep(0.5)
