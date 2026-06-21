@@ -9,13 +9,11 @@ interpreter `/home/user/development/.venv/bin/python` as user `user`.
 | ------------------------ | ------------------ | ----------------------------------------------------- |
 | `reed_contacts.service`  | `reed_contacts.py` | Reads the reed switch on GPIO 17, emails open/close.  |
 | `reed_mailing.service`   | `polling.py`       | Polls the IMAP inbox and cleans up old mail pairs.    |
-| `reed_monitoring.service`| `server.py`        | Flask web UI that shows the logs (`/logs`).           |
 | `reed_reboot.service`    | `/sbin/reboot`     | Oneshot, triggered by the timer below.                |
 | `reed_reboot.timer`      | —                  | Reboots the Pi daily at midnight (`OnCalendar=*-*-* 00:00:00`, `Persistent=true`). |
 
-All processes share a single log file, `door.log`, which the web UI reads. The
-file is wiped fresh each time `reed_monitoring` (the server) starts — i.e. after
-every midnight reboot.
+The processes don't write a log file; each one prints to stdout, which systemd
+captures in the journal (see **View logs** below).
 
 ## Managing the services (systemd)
 
@@ -44,12 +42,6 @@ sudo journalctl -u reed_contacts.service -f
 
 # only since the last boot
 sudo journalctl -u reed_contacts.service -b
-```
-
-The application also keeps its own combined log that the web UI displays:
-
-```bash
-tail -f /home/user/development/door.log   # written by all the processes
 ```
 
 ### The reboot timer
@@ -100,7 +92,7 @@ sudo systemctl restart reed_contacts.service
    ```
 
    > This matches the pattern of the existing units. Change `ExecStart` to the
-   > target script (`reed_contacts.py`, `polling.py`, or `server.py`). The
+   > target script (`reed_contacts.py` or `polling.py`). The
    > `ExecStartPre=/bin/sleep 60` gives the network/clock time to settle after
    > the midnight reboot before the process starts.
 
