@@ -9,6 +9,8 @@ interpreter `/home/user/development/.venv/bin/python` as user `user`.
 | ------------------------ | ------------------ | ----------------------------------------------------- |
 | `reed_contacts.service`  | `reed_contacts.py` | Reads the reed switch on GPIO 17, emails open/close.  |
 | `reed_mailing.service`   | `polling.py`       | Polls the IMAP inbox and cleans up old mail pairs.    |
+| `reed_dailystats.service`| `daily_stats.py`   | Oneshot, emails the day's door stats. Triggered by the timer below. |
+| `reed_dailystats.timer`  | —                  | Fires daily at 23:30 (`OnCalendar=*-*-* 23:30:00`, `Persistent=true`), 30 min before the reboot. |
 | `reed_reboot.service`    | `/sbin/reboot`     | Oneshot, triggered by the timer below.                |
 | `reed_reboot.timer`      | —                  | Reboots the Pi daily at midnight (`OnCalendar=*-*-* 00:00:00`, `Persistent=true`). |
 

@@ -37,3 +37,31 @@ def sendMessage(body, session_id=None):
     finally:
         if server is not None:
             server.quit()
+
+def dailyReport(label, body):
+    """Send the daily door-stats report.
+
+    Unlike sendMessage, the subject is just the prefix + label (no newlines) and
+    the body is sent verbatim, so a multi-line report stays in the body where it
+    belongs. It carries no '#<id>' tag, so polling's cleanup leaves it in the
+    inbox.
+    """
+    server = None
+    try:
+        subjectTime = datetime.datetime.now()
+        subject = '[HOMENET - DOOR] ' + label + ' ' + str(subjectTime)
+        msg = MIMEMultipart()
+        msg['From'] = sender_email
+        msg['To'] = receiver_email
+        msg['Subject'] = subject
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(sender_email, password)
+        msg.attach(MIMEText(body, 'plain'))
+        server.send_message(msg)
+        log(f'Daily report mail sent: {label}')
+    except Exception as e:
+        log(f'Error sending daily report: {e}')
+    finally:
+        if server is not None:
+            server.quit()
